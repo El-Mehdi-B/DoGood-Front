@@ -1,1 +1,14 @@
-<router-outlet></router-outlet>
+<a [routerLink]="['/blaaaa']">go to not found</a>
+<br>
+<a [routerLink]="['/register']">go to register</a>
+<br>
+<a [routerLink]="['/login']">go to login</a>
+<br>
+<a [routerLink]="['']">go to main</a>
+
+
+
+
+<div [@fadeAnimation]="getRouterOutletState(o)">
+    <router-outlet #o="outlet"></router-outlet>
+</div>
