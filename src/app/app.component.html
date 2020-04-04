@@ -1,10 +1,4 @@
 <app-toolbar></app-toolbar>
-<br>
-<a [routerLink]="['/register']">go to register</a>
-<br>
-<a [routerLink]="['/login']">go to login</a>
-<br>
-<a [routerLink]="['']">go to main</a>
 
 <div [@fadeAnimation]="getRouterOutletState(o)">
     <router-outlet #o="outlet"></router-outlet>

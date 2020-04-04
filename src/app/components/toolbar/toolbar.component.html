@@ -1,20 +1,23 @@
-<mat-toolbar color="primary">
-    <!--
-    <mat-toolbar-row *ngIf="false">
+<mat-toolbar color="primary" [@openClose]="toAnimate">
+
+    <mat-toolbar-row *ngIf="!toRender" >
       <h1>DoGood!</h1>
       <span class="menu-spacer"></span>
       <div>
-        <a mat-button [routerLink]="'/login'">Login</a>
-        <a mat-raised-button [routerLink]="'/register'">Register</a>
+        <a mat-button  [routerLink]="'/login'">Login</a>
+        <a mat-raised-button (click)="animate()" [routerLink]="'/register'">Register</a>
       </div>
     </mat-toolbar-row>
-    -->
-    <mat-toolbar-row *ngIf="true">
-        <h1>DoBad!</h1>
+    
+    <mat-toolbar-row *ngIf="toRender" >
+        <h1>DoGood!</h1>
         <div>
         <a mat-icon-button [routerLink]="'/main'"><mat-icon aria-hidden="false" aria-label="rechercher">search</mat-icon>
         </a>
-          <a mat-button [routerLink]="'/tasks'">My tasks</a>
+          <a mat-icon-button [routerLink]="'/tasks'">
+            <mat-icon aria-hidden="false" aria-label="Profil">list</mat-icon>
+
+        </a>
           <a mat-icon-button [routerLink]="'/profil'">
             <mat-icon aria-hidden="false" aria-label="Profil">account_circle</mat-icon>
             </a>
@@ -22,7 +25,7 @@
         <span class="menu-spacer"></span>
         <div>
             <a mat-icon-button [routerLink]="'/about'"><mat-icon aria-hidden="false" aria-label="A propos">help</mat-icon></a>
-            <button mat-raised-button>Se déconnecter</button>
+            <button mat-raised-button (click)="animate()">Logout</button>
         </div>
       </mat-toolbar-row>
   </mat-toolbar>
