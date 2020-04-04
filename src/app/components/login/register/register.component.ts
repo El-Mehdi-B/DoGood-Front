@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
+  Roles: any = ['Admin', 'Author', 'Reader'];
 
   constructor() { }
 

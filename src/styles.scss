@@ -56,5 +56,17 @@ $DoGood-theme: mat-light-theme($DoGood-primary, $DoGood-accent, $DoGood-warn);
 
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,body{
+    height:100%;
+    margin:0;
+    padding:0;}
+body{
+    //https://www.psdgraphics.com/file/ecology-concept.jpg
+    //https://lh4.googleusercontent.com/-XplyTa1Za-I/VMSgIyAYkHI/AAAAAAAADxM/oL-rD6VP4ts/w1184-h666/Android-Lollipop-wallpapers-Google-Now-Wallpaper-2.png
+    background-image:url(https://www.psdgraphics.com/file/ecology-concept.jpg);
+    background-position:center;
+    background-size:cover;
+    background-repeat:no-repeat;
+    min-height:100vh;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
