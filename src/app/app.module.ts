@@ -6,9 +6,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentsModule } from './modules/components.module';
 import { AngularMaterialModule } from './modules/angular-material.module';
 import { AuthGuard } from './services/guards/auth.guard';
+import { NoSpaceDirective } from './directive/no-space.directive';
 @NgModule({
   declarations: [
     AppComponent,
+    NoSpaceDirective,
   ],
   imports: [
     BrowserModule,

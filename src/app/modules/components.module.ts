@@ -7,6 +7,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AngularMaterialModule } from './angular-material.module';
 import { AppRoutingModule } from './app-routing.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -18,7 +19,7 @@ import { AppRoutingModule } from './app-routing.module';
         ToolbarComponent,        
         NotFoundComponent
     ],
-    imports: [CommonModule, AngularMaterialModule,AppRoutingModule],
+    imports: [CommonModule,AngularMaterialModule,AppRoutingModule,ReactiveFormsModule],
     exports: [
         LoginComponent,
         RegisterComponent,
