@@ -17,7 +17,8 @@ import { ReactiveFormsModule } from '@angular/forms';
         RegisterComponent,
         MainComponent,
         ToolbarComponent,        
-        NotFoundComponent
+        NotFoundComponent,
+        RegisterComponent
     ],
     imports: [CommonModule,AngularMaterialModule,AppRoutingModule,ReactiveFormsModule],
     exports: [
@@ -25,7 +26,8 @@ import { ReactiveFormsModule } from '@angular/forms';
         RegisterComponent,
         MainComponent,
         ToolbarComponent,        
-        NotFoundComponent]
+        NotFoundComponent,
+        RegisterComponent]
   })
   export class ComponentsModule { }
   

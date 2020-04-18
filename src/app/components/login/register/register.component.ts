@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { passwordValidator, noWhitespaceValidator } from 'src/app/Utils/custom-validators';
 import { Router } from '@angular/router';
-import { strict } from 'assert';
 import { usernameRegex, passwordRegex } from 'src/app/Utils/regex';
 
 @Component({
@@ -36,17 +35,23 @@ export class RegisterComponent implements OnInit {
 
 	createUser(): void {
 		//TODO
+		let valid : boolean = this.userForm.valid;
 		this.processing = true;
 		this.userForm.disable();
-		setTimeout(() => {
-			if (this.userForm.valid) {
 
-			} else {
-				this.processing = false;
-				this.userForm.enable();
+		if(valid){
+			console.log('valid form');
+			setTimeout(()=>{this.router.navigate(['registered'])},5000);
+		}else{
+			setTimeout(()=>{
+				this.processing=false;
 				this.userForm.reset();
-			}
-		}, 4000)
+				this.userForm.enable();
+			},
+				2000)
+			console.log('invalid form');
+		}
+		
 
 	}
 	
@@ -60,13 +65,13 @@ export class RegisterComponent implements OnInit {
 
 		if (this.userForm.controls[controlName].hasError('required')) {
 			console.log(' reached required');
-			errorMessage = 'Vous devez remplir ce champ';
+			errorMessage = 'Vous devez remplir ce champ'; 
 		}
 		else{
 			switch (controlName){
 				case 'username':
-					errorMessage=this.userForm.controls[controlName].hasError('minLength(8)')?'username trop petit.':'';
-					errorMessage=this.userForm.controls[controlName].hasError('maxLength(32)')?'username trop grand.':'';
+					errorMessage=this.userForm.controls[controlName].hasError('minLength')?'username trop petit.':'';
+					errorMessage=this.userForm.controls[controlName].hasError('maxLength')?'username trop grand.':'';
 					break;
 				case 'email':
 					console.log(' reached switch statement')
@@ -90,23 +95,9 @@ export class RegisterComponent implements OnInit {
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
-  console.log('the form is : '+this.userForm.valid);
+  
+		console.log('the form is : '+this.userForm.valid);
   console.log('username: '+
   this.userForm.controls['username'].valid+
   ', email: '+

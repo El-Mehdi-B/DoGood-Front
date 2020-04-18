@@ -8,6 +8,6 @@ export class AuthService {
   constructor() { }
   isLogged():boolean{
     console.log('AUTHENTIFICATION CALLED');
-    return false;
+    return true;
   }
 }

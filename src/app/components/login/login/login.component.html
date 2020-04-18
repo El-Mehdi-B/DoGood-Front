@@ -1,20 +1,20 @@
 <div class="login-wrapper" >
     <mat-card class="box">
       <mat-card-header>
-        <mat-card-title>Log in</mat-card-title>
+        <mat-card-title>Connection</mat-card-title>
       </mat-card-header>
   
       <form class="example-form" [formGroup]="loginForm" (ngSubmit)="login()" >
         <mat-card-content>
           <mat-form-field class="example-full-width">
-            <input required matInput placeholder="Username" formControlName="username" id="username" maxlength="32">
+            <input required matInput placeholder="Nom d'utilisateur" formControlName="username" id="username" maxlength="32">
           </mat-form-field>
   
           <mat-form-field class="example-full-width">
-            <input required matInput type="password" placeholder="Password" formControlName="password" id="password">
+            <input required matInput type="password" placeholder="Mot de passe" formControlName="password" id="password">
           </mat-form-field>
         </mat-card-content>
-        <button [disabled]="notReadyToSend||processing" mat-stroked-button (click)="login()" color="accent" class="btn-block">Log in</button>
+        <button [disabled]="notReadyToSend||processing" mat-stroked-button (click)="login()" color="accent" class="btn-block">Se connecter</button>
       </form>
       <mat-progress-bar *ngIf="processing" mode="query"></mat-progress-bar>
     </mat-card>

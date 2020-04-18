@@ -1,6 +1,6 @@
 <mat-toolbar color="primary" [@openClose]="toAnimate">
 
-    <mat-toolbar-row *ngIf="toRender" >
+    <mat-toolbar-row *ngIf="!logged" >
       <h1>DoGood!</h1>
       <span class="menu-spacer"></span>
       <div>
@@ -9,7 +9,7 @@
       </div>
     </mat-toolbar-row>
     
-    <mat-toolbar-row *ngIf="!toRender" >
+    <mat-toolbar-row *ngIf="logged" >
         <h1>DoGood!</h1>
         <div>
         <a mat-icon-button [routerLink]="'/main'"><mat-icon aria-hidden="false" aria-label="rechercher">search</mat-icon>

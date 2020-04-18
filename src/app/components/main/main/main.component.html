@@ -1,1 +1,11 @@
-<p>main works!</p>
+<mat-card class="map-wrapper" fxLayoutAlign="start start">
+    <mat-form-field class="adresse">
+        <input matInput placeholder="Adresse">
+    </mat-form-field>
+    <mat-form-field class="perimetre">
+        <input type="number" min="0" matInput placeholder="Rayon" (input)="updateCenterPerimeter($event.target.value)">
+    </mat-form-field>
+
+
+        <div id="map" ></div>
+</mat-card>

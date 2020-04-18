@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { trigger, animate, transition,state, style } from '@angular/animations';
+import { AuthService } from 'src/app/services/services/auth.service';
 
 @Component({
   selector: 'app-toolbar',
@@ -25,14 +26,16 @@ import { trigger, animate, transition,state, style } from '@angular/animations';
 })
 export class ToolbarComponent implements OnInit {
   toAnimate='down'; 
-  toRender:boolean=true;
-  constructor() { }
+  logged:boolean;
+  constructor(authService: AuthService) { 
+    this.logged=authService.isLogged();
+  }
 
   ngOnInit(): void {
   }
   animate(){
     this.toAnimate = 'up';
-    setTimeout(()=> {this.toRender= !this.toRender, this.toAnimate='down'} ,500);
+    setTimeout(()=> {this.logged= !this.logged, this.toAnimate='down'} ,500);
     
   }
 
