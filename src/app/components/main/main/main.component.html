@@ -1,11 +1,31 @@
-<mat-card class="map-wrapper" fxLayoutAlign="start start">
-    <mat-form-field class="adresse">
-        <input matInput placeholder="Adresse">
-    </mat-form-field>
-    <mat-form-field class="perimetre">
-        <input type="number" min="0" matInput placeholder="Rayon" (input)="updateCenterPerimeter($event.target.value)">
-    </mat-form-field>
+<div class="parent">
+    <div class="div1">
+        <mat-card  class="wrapper">
+            <mat-card-title>Rechercher une tache</mat-card-title>
+            <mat-accordion>
+                <mat-expansion-panel>
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Filtres
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+                    <mat-form-field class="filter" >
+                        <input matInput placeholder="Adresse" (input)="getGpsCoordinateFromAdress($event.target.value)">
+                    </mat-form-field>
+                    <mat-form-field class="filter">
+                        <input type="number" min="0" matInput placeholder="Rayon" (input)="updateCenterPerimeter($event.target.value)">
+                    </mat-form-field>
+                </mat-expansion-panel>
+            </mat-accordion>
+            <mat-list>
+                <mat-list-item> Pepper </mat-list-item>
+                <mat-list-item> Salt </mat-list-item>
+                <mat-list-item> Paprika </mat-list-item>
+            </mat-list>
+        </mat-card>
+    </div>
 
-
-        <div id="map" ></div>
-</mat-card>
+    <div class="div2">
+            <div id="map" ></div>
+     </div>
+</div>

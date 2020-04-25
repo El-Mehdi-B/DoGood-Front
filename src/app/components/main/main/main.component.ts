@@ -1,5 +1,6 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import * as L from '../../../../../node_modules/leaflet';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-main',
@@ -10,6 +11,13 @@ export class MainComponent implements AfterViewInit {
   map;
   center;
   centerPerimeter;
+  radius;
+  httpClient:HttpClient;
+  storage;
+
+  constructor(httpClient:HttpClient){
+    this.httpClient=httpClient;
+  }
 
   centerIcon = new L.Icon({
     iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-icon.png',
@@ -23,16 +31,16 @@ export class MainComponent implements AfterViewInit {
 
 
    tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    minZoom: 12,
-    maxZoom: 17,
+    minZoom: 13,
+    maxZoom: 18,
     attribution :'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   })
 
-  constructor() { }
   ngAfterViewInit(): void {
     console.log('after view init');
     this.createMap();
   }
+
 
   createMap(){
     const anchorPoint = {
@@ -45,12 +53,8 @@ export class MainComponent implements AfterViewInit {
       zoom : zoomLevel
     });
     this.tileLayer.addTo(this.map);
-    this.updateCenter({
-      lat:anchorPoint.lat,
-      long:anchorPoint.long
-    })
-    this.map.on('click',this.onMapClick.bind(this));
 
+    this.map.on('dblclick',this.onMapClick.bind(this));
   }
 
   onMapClick(e){
@@ -59,7 +63,10 @@ export class MainComponent implements AfterViewInit {
       lat:e.latlng.lat,
       long: e.latlng.lng,
     });
+  
     this.focusOnCenter();
+    this.map.doubleClickZoom.disable(); 
+
   }
 
   updateCenter(coordinates){
@@ -68,7 +75,7 @@ export class MainComponent implements AfterViewInit {
     }
     this.center = L.marker([coordinates.lat,coordinates.long], {icon: this.centerIcon});
     this.center.addTo(this.map);
-    this.updateCenterPerimeter(0);
+    this.updateCenterPerimeter(this.radius);
   }
 
   focusOnCenter(){
@@ -81,6 +88,7 @@ export class MainComponent implements AfterViewInit {
   }
 
   updateCenterPerimeter(radius:number){
+    this.radius=radius;
     if(this.centerPerimeter!=null){
       this.map.removeLayer(this.centerPerimeter)
     }
@@ -90,12 +98,31 @@ export class MainComponent implements AfterViewInit {
         fillColor: 'green',
         fillOpacity: 0.2,
         weight:2,
-        radius: radius
+        radius: this.radius
     });
     this.centerPerimeter.addTo(this.map);
     }
+  }
 
 
+  getGpsCoordinateFromAdress(adress: string){
+    
+
+    let baseUrl : string = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+adress;
+    console.log(baseUrl);
+     this.httpClient.get<any[]>(baseUrl).subscribe((response) => {
+      let latitude: number = response[0]['lat'];
+      let longitude: number = response[0]['lon'];
+      this.updateCenter({
+        lat:latitude,
+        long:longitude
+      })
+      this.focusOnCenter();
+    this.map.doubleClickZoom.disable(); 
+    },
+    (error) => {
+      console.log('Erreur ! : ' + error);
+    });
   }
 
 

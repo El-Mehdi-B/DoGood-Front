@@ -5,9 +5,7 @@
 
 <app-toolbar></app-toolbar>
 
-
-
-
-<div [@fadeAnimation]="getRouterOutletState(o)">
+<div class="component-container" [@fadeAnimation]="getRouterOutletState(o)">
     <router-outlet #o="outlet"></router-outlet>
+
 </div>

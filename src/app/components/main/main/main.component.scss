@@ -1,25 +1,33 @@
-.main-container{
-    margin: 2%;
-    height: 100%;
-    top: 10px;
-    bottom: 10px;
+
+.parent {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: 1fr;
+  height: 100vh;
+  }
+  
+  .div1 { grid-area: 1 / 1 / 2 / 4;
+    z-index: 99;
+  }
+  .div2 { grid-area: 1 / 4 / 2 / 13; 
+    width: auto;
+    height: auto;
+    z-index: 0;
+  }
+
+.wrapper {
+  width: 95%;
+  height: 95%;
+  margin: 1%;
+  
+  } 
+  
+#map {
+  height: 100%;
+  width: 100%;
 }
-.map-wrapper {
-    position: absolute;
-    top: 80px;
-    bottom: 1%;
-    left: 1%;
-    right: 1%;
-    padding: 0.5%;
-  }
+.filter{
+  width: 100%;
+  margin: 0px;
+}
   
-  .map-border {
-    border: 5px solid orange;
-    height: 100%;
-  }
-  
-  #map {
-    height: 100%;
-  }
-  .adresse{min-width:65%;max-width:300px;width:65%;margin: 1%;}
-  .perimetre{min-width:25%;max-width:300px;width:25%;margin: 1%;}

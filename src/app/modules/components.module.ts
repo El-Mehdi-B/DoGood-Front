@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { AngularMaterialModule } from './angular-material.module';
 import { AppRoutingModule } from './app-routing.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 
 
@@ -20,7 +21,7 @@ import { ReactiveFormsModule } from '@angular/forms';
         NotFoundComponent,
         RegisterComponent
     ],
-    imports: [CommonModule,AngularMaterialModule,AppRoutingModule,ReactiveFormsModule],
+    imports: [CommonModule,AngularMaterialModule,AppRoutingModule,ReactiveFormsModule,HttpClientModule],
     exports: [
         LoginComponent,
         RegisterComponent,
