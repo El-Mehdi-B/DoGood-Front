@@ -2,26 +2,19 @@
     <div class="div1">
         <mat-card  class="wrapper">
             <mat-card-title>Rechercher une tache</mat-card-title>
-            <mat-accordion>
-                <mat-expansion-panel>
-                  <mat-expansion-panel-header>
-                    <mat-panel-title>
-                        Filtres
-                    </mat-panel-title>
-                  </mat-expansion-panel-header>
-                    <mat-form-field class="filter" >
-                        <input matInput placeholder="Adresse" (input)="getGpsCoordinateFromAdress($event.target.value)">
-                    </mat-form-field>
-                    <mat-form-field class="filter">
-                        <input type="number" min="0" matInput placeholder="Rayon" (input)="updateCenterPerimeter($event.target.value)">
-                    </mat-form-field>
-                </mat-expansion-panel>
-            </mat-accordion>
-            <mat-list>
-                <mat-list-item> Pepper </mat-list-item>
-                <mat-list-item> Salt </mat-list-item>
-                <mat-list-item> Paprika </mat-list-item>
-            </mat-list>
+
+                <mat-form-field class="filter">
+                    <input type="text"  placeholder="Adresse" matInput class="filter" [matAutocomplete]="auto" [ngModel] ="address" (ngModelChange) ="address=$event;getGpsCoordinateFromAdress($event)" />
+                </mat-form-field>
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let singleAddress of addressList"  [value] = "singleAddress['display_name']">
+                        {{singleAddress['display_name']}}
+                    </mat-option>
+                </mat-autocomplete>
+
+                <mat-form-field class="filter">
+                    <input type="number" min="0" matInput placeholder="Rayon" [(ngModel)]="radius" (input)="updateCenterPerimeter(radius)">
+                </mat-form-field>
         </mat-card>
     </div>
 

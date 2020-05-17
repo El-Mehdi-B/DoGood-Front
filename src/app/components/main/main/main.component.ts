@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import * as L from '../../../../../node_modules/leaflet';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-main',
@@ -14,6 +14,11 @@ export class MainComponent implements AfterViewInit {
   radius;
   httpClient:HttpClient;
   storage;
+  public address:string ="";
+  addressRequestTimeout;
+  markersIsideBoundsTimeout;
+  addressList:any[];
+
 
   constructor(httpClient:HttpClient){
     this.httpClient=httpClient;
@@ -54,11 +59,13 @@ export class MainComponent implements AfterViewInit {
     });
     this.tileLayer.addTo(this.map);
 
-    this.map.on('dblclick',this.onMapClick.bind(this));
+	this.map.on('dblclick',this.onMapClick.bind(this));
+	this.map.on('zoomend',this.getTodosMarkersFromBounds.bind(this));
+	this.map.on('moveend',this.getTodosMarkersFromBounds.bind(this));
+
   }
 
   onMapClick(e){
-    console.log('Click on map !');
     this.updateCenter({
       lat:e.latlng.lat,
       long: e.latlng.lng,
@@ -66,25 +73,55 @@ export class MainComponent implements AfterViewInit {
   
     this.focusOnCenter();
     this.map.doubleClickZoom.disable(); 
+  }
+
+  getLatLongFromCardinalPoint(latleng){
+	return {
+		lat : latleng.lat,
+		lng : latleng.lng
+	}
+  }
+
+  getTodosMarkersFromBounds(e){
+	let boundingbox = [this.getLatLongFromCardinalPoint(this.map.getBounds().getNorthWest()),this.getLatLongFromCardinalPoint(this.map.getBounds().getNorthEast()),this.getLatLongFromCardinalPoint(this.map.getBounds().getSouthEast()),this.getLatLongFromCardinalPoint(this.map.getBounds().getSouthWest())];
+	let params: HttpParams= new HttpParams().set('boundingBox',JSON.stringify(boundingbox));
+	let baseUrl : string = 'http://localhost:8080/api/geMarkersFromBounds.php';
+	let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Access-Control-Allow-Origin','*');
+		
+	let options = {params: params, headers: headers}
+
+	clearTimeout(this.markersIsideBoundsTimeout);
+		this.markersIsideBoundsTimeout =setTimeout(()=>{
+		
+		this.httpClient.get<any[]>(baseUrl, options).subscribe((response) => {
+			
+			//TODO
+		},
+		(error) => {
+		console.log('Erreur ! : ' + error);
+		});
+		},1000);
+}
+  getFilteredTodoMarkers(e){
 
   }
 
   updateCenter(coordinates){
     if(this.center!=null){
       this.map.removeLayer(this.center);
-    }
+	}
+	this.radius=0;
     this.center = L.marker([coordinates.lat,coordinates.long], {icon: this.centerIcon});
     this.center.addTo(this.map);
-    this.updateCenterPerimeter(this.radius);
+	this.updateCenterPerimeter(this.radius);
+	this.focusOnCenter();
+	this.map.doubleClickZoom.disable();
+	this.addressList=null;
+	this.address="";
   }
 
   focusOnCenter(){
     this.map.panTo(this.center.getLatLng());
-  }
-
-  addMarker(coordinates){
-    //todo
-
   }
 
   updateCenterPerimeter(radius:number){
@@ -105,43 +142,43 @@ export class MainComponent implements AfterViewInit {
   }
 
 
-  getGpsCoordinateFromAdress(adress: string){
+  getGpsCoordinateFromAdress(targetAddress: string){
+	console.log('reached the set point');
+    let isFound=false;
+    if(this.addressList != null){
+      for(let address of this.addressList){
+        if (address['display_name']==targetAddress){
+          let latitude: number = address['lat'];
+          let longitude: number = address['lon'];
+          this.updateCenter({
+            lat:latitude,
+            long:longitude
+          })
+
+          isFound=true;
+        }
+      }
+    }
+    if(!isFound){
+		clearTimeout(this.addressRequestTimeout);
+		this.addressRequestTimeout =setTimeout(()=>{
+		let baseUrl : string = 'https://nominatim.openstreetmap.org/search?format=json&q='+targetAddress;
+		console.log(baseUrl);
+		this.httpClient.get<any[]>(baseUrl).subscribe((response) => {
+		this.addressList=response;
+		},
+		(error) => {
+		console.log('Erreur ! : ' + error);
+		});
+		},1000);
+    }
     
 
-    let baseUrl : string = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+adress;
-    console.log(baseUrl);
-     this.httpClient.get<any[]>(baseUrl).subscribe((response) => {
-      let latitude: number = response[0]['lat'];
-      let longitude: number = response[0]['lon'];
-      this.updateCenter({
-        lat:latitude,
-        long:longitude
-      })
-      this.focusOnCenter();
-    this.map.doubleClickZoom.disable(); 
-    },
-    (error) => {
-      console.log('Erreur ! : ' + error);
-    });
+    
   }
+
 
 
 }
 
 
-
-/*
-text to adress API
-bound to anchors points ?
-
-var bounds = new L.LatLngBounds(arrayOfLatLngs);
-
-
-
-recenter with select on adress,
-select on map,
-draw circle
-display Menu,
-Popup ?
-
-*/
