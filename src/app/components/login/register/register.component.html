@@ -4,30 +4,30 @@
       <mat-card-title>Inscription</mat-card-title>
     </mat-card-header>
 
-    <form class="example-form" [formGroup]="userForm" (ngSubmit)="createUser()">
+    <form class="form" [formGroup]="userForm" (ngSubmit)="createUser()">
       <mat-card-content>
 
-        <mat-form-field class="example-full-width">
+        <mat-form-field class="full-width">
           <input ng-change="field = field.split(' ').join('')" type="text" required matInput placeholder="Nom d'utilisateur" formControlName="username" id="username" maxlength="32" >
           <mat-hint align="end">Doit faire plus de 8 characters</mat-hint>
           <mat-error *ngIf="true">{{getControlError('username')}}</mat-error>
           <!-- -->
         </mat-form-field>
 
-        <mat-form-field class="example-full-width">
+        <mat-form-field class="full-width">
           <input required matInput placeholder="Email" formControlName="email" id="email">
           <mat-error *ngIf="true">Email non valide</mat-error>
 
         </mat-form-field>
 
-        <mat-form-field class="example-full-width">
+        <mat-form-field class="full-width">
           <input  required type="password" matInput placeholder="Mot de passe" formControlName="password" id="password">
           <mat-hint align="end">Un chiffre, majiscule, miniscule et character spéciale(minimum 8)</mat-hint>
           <mat-error *ngIf="true">Doit contenir aumoin un chifre,une majiscule et minisicule et un character spécial</mat-error>
 
         </mat-form-field>
 
-        <mat-form-field class="example-full-width">
+        <mat-form-field class="full-width">
           <input  required type="password" matInput placeholder="Confirmez le mot de passe" formControlName="confirmPassword" id="confirmPassword"  >
           <mat-error *ngIf="true">Veuillez confirmez le mot de passe</mat-error>
 
@@ -35,6 +35,7 @@
 
       </mat-card-content>
       <button [disabled]="notReadyToSend||processing"  mat-stroked-button color="accent" class="btn-block">S'inscrire</button>
+      <mat-error *ngIf="connectionErrorMessage!=''">{{connectionErrorMessage}}</mat-error>
     </form>
     <mat-progress-bar *ngIf="processing" mode="query"></mat-progress-bar>
   </mat-card>

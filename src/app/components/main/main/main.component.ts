@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import * as L from '../../../../../node_modules/leaflet';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { GeocodingService } from 'src/app/services/services/geocoding.service';
 
 @Component({
   selector: 'app-main',
@@ -11,6 +12,7 @@ export class MainComponent implements AfterViewInit {
   map;
   center;
   centerPerimeter;
+  geocodingService;
   radius;
   httpClient:HttpClient;
   storage;
@@ -20,7 +22,8 @@ export class MainComponent implements AfterViewInit {
   addressList:any[];
 
 
-  constructor(httpClient:HttpClient){
+  constructor(httpClient:HttpClient, geocodingService:GeocodingService){
+	this.geocodingService= geocodingService;
     this.httpClient=httpClient;
   }
 
@@ -45,8 +48,6 @@ export class MainComponent implements AfterViewInit {
     console.log('after view init');
     this.createMap();
   }
-
-
   createMap(){
     const anchorPoint = {
       lat : 45.745450,
@@ -64,7 +65,6 @@ export class MainComponent implements AfterViewInit {
 	this.map.on('moveend',this.getTodosMarkersFromBounds.bind(this));
 
   }
-
   onMapClick(e){
     this.updateCenter({
       lat:e.latlng.lat,
@@ -74,28 +74,22 @@ export class MainComponent implements AfterViewInit {
     this.focusOnCenter();
     this.map.doubleClickZoom.disable(); 
   }
-
   getLatLongFromCardinalPoint(latleng){
 	return {
 		lat : latleng.lat,
 		lng : latleng.lng
 	}
   }
-
   getTodosMarkersFromBounds(e){
 	let boundingbox = [this.getLatLongFromCardinalPoint(this.map.getBounds().getNorthWest()),this.getLatLongFromCardinalPoint(this.map.getBounds().getNorthEast()),this.getLatLongFromCardinalPoint(this.map.getBounds().getSouthEast()),this.getLatLongFromCardinalPoint(this.map.getBounds().getSouthWest())];
-	let params: HttpParams= new HttpParams().set('boundingBox',JSON.stringify(boundingbox));
-	let baseUrl : string = 'http://localhost:8080/api/geMarkersFromBounds.php';
-	let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Access-Control-Allow-Origin','*');
-		
-	let options = {params: params, headers: headers}
+	
 
 	clearTimeout(this.markersIsideBoundsTimeout);
 		this.markersIsideBoundsTimeout =setTimeout(()=>{
 		
-		this.httpClient.get<any[]>(baseUrl, options).subscribe((response) => {
+		this.geocodingService.getMarkersFromBounds(boundingbox).subscribe((response) => {
 			
-			//TODO
+			console.log(response['message']);
 		},
 		(error) => {
 		console.log('Erreur ! : ' + error);
@@ -105,7 +99,6 @@ export class MainComponent implements AfterViewInit {
   getFilteredTodoMarkers(e){
 
   }
-
   updateCenter(coordinates){
     if(this.center!=null){
       this.map.removeLayer(this.center);
@@ -119,11 +112,9 @@ export class MainComponent implements AfterViewInit {
 	this.addressList=null;
 	this.address="";
   }
-
   focusOnCenter(){
     this.map.panTo(this.center.getLatLng());
   }
-
   updateCenterPerimeter(radius:number){
     this.radius=radius;
     if(this.centerPerimeter!=null){
@@ -140,8 +131,6 @@ export class MainComponent implements AfterViewInit {
     this.centerPerimeter.addTo(this.map);
     }
   }
-
-
   getGpsCoordinateFromAdress(targetAddress: string){
 	console.log('reached the set point');
     let isFound=false;
@@ -154,7 +143,6 @@ export class MainComponent implements AfterViewInit {
             lat:latitude,
             long:longitude
           })
-
           isFound=true;
         }
       }

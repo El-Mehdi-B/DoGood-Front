@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { passwordRegex, usernameRegex } from 'src/app/Utils/regex';
+import { AuthService } from 'src/app/services/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -13,9 +14,10 @@ export class LoginComponent implements OnInit {
   router:Router;
   notReadyToSend: boolean = true;
   processing: boolean = false;
-  
+  authService: AuthService;
+  authentificationError: String = ""
 
-  constructor(router:Router) {this.router=router; }
+  constructor(router:Router, authService: AuthService) {this.router=router; this.authService=authService}
 
   ngOnInit(): void {
     this.loginForm = new FormGroup({
@@ -28,15 +30,19 @@ export class LoginComponent implements OnInit {
   }
 
   login():void{
-
-    this.processing= true;
+    this.processing=true;
     this.loginForm.disable();
-    console.log('Login action');
-    if(this.loginForm.valid){
-
-    }else{
-      
-    }
+    this.authService.connect(this.loginForm.controls['username'].value,this.loginForm.controls['password'].value).subscribe(
+      response=>{
+        this.authService.storeToken(response['jwt']);
+      }
+      ,error=>{
+        this.authentificationError= error['error']['message'];
+        this.processing = false;
+        this.loginForm.reset();
+        this.loginForm.enable();
+      }
+    )
   }
   
 

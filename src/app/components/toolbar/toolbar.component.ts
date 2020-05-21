@@ -27,8 +27,11 @@ import { AuthService } from 'src/app/services/services/auth.service';
 export class ToolbarComponent implements OnInit {
   toAnimate='down'; 
   logged:boolean;
+  authService:AuthService
   constructor(authService: AuthService) { 
     this.logged=authService.isLogged();
+    authService.setToolbar(this);
+    this.authService=authService;
   }
 
   ngOnInit(): void {
@@ -36,7 +39,9 @@ export class ToolbarComponent implements OnInit {
   animate(){
     this.toAnimate = 'up';
     setTimeout(()=> {this.logged= !this.logged, this.toAnimate='down'} ,500);
-    
+  }
+  logout(){
+    this.authService.disconnect();
   }
 
 }

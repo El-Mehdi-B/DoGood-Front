@@ -4,8 +4,8 @@
       <h1>DoGood!</h1>
       <span class="menu-spacer"></span>
       <div>
-        <a mat-button  [routerLink]="'/login'">Login</a>
-        <a mat-raised-button  [routerLink]="'/register'">Register</a>
+        <a mat-button  [routerLink]="'/login'">Se Connecter</a>
+        <a mat-raised-button  [routerLink]="'/register'">S'inscrire</a>
       </div>
     </mat-toolbar-row>
     
@@ -25,7 +25,7 @@
         <span class="menu-spacer"></span>
         <div>
             <a mat-icon-button [routerLink]="'/about'"><mat-icon aria-hidden="false" aria-label="A propos">help</mat-icon></a>
-            <button mat-raised-button (click)="animate()">Logout</button>
+            <button mat-raised-button (click)="logout()">Logout</button>
         </div>
       </mat-toolbar-row>
   </mat-toolbar>
