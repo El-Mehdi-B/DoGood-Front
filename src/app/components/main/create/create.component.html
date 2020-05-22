@@ -23,10 +23,10 @@
                 </mat-form-field>
 
                 <button type="button" mat-raised-button (click)="fileInput.click()">Choisir une image</button>
-                <input hidden (change)="onFileSelected()"  #fileInput  type="file"  accept=".png,.jpg,.jpeg" id="file">
+                <input hidden (change)="onFileSelected()"  #fileInput  type="file"  accept=".png,.jpg" id="file">
                     
                 </mat-card-content>
-                <button [disabled]="false" (click)="sendMarker()" mat-stroked-button color="accent" class="filter" class="btn-block">Ajouter la tache</button>
+                <button [disabled]="false" (click)="postImage()" mat-stroked-button color="accent" class="filter" class="btn-block">Ajouter la tache</button>
                 <mat-error *ngIf="false"></mat-error>
             </form>
         </mat-card>

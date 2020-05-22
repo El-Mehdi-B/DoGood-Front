@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from "@angular/core";
+import { Component, AfterViewInit, ViewChild } from "@angular/core";
 import * as L from "../../../../../node_modules/leaflet";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { GeocodingService } from "src/app/services/services/geocoding.service";
@@ -25,6 +25,12 @@ export class CreateComponent implements AfterViewInit {
   authService: AuthService;
 
   srcResult;
+
+  @ViewChild('fileInput')
+  fileInput;
+
+  file: File | null = null;
+
 
   constructor(httpClient: HttpClient, geocodingService: GeocodingService, authService: AuthService) {
     this.geocodingService = geocodingService;
@@ -175,34 +181,19 @@ export class CreateComponent implements AfterViewInit {
   }
 
   onFileSelected() {
-    const inputNode: any = document.querySelector('#file');
-  
-    if (typeof (FileReader) !== 'undefined') {
-      const reader = new FileReader();
-      console.log("hello !");
-      reader.onload = (e: any) => {
-        this.srcResult = e.target.result;
-        console.log("uploaded !");
-      };
-      reader.readAsArrayBuffer(inputNode.files[0]);
-      console.log("reading !");
-
-    }
+    const files: { [key: string]: File } = this.fileInput.nativeElement.files;
+    this.file = files[0];
+    console.log(this.file);
   }
-  sendMarker(){
+  postImage(){
 
     let formData: FormData = new FormData();
-    formData.append('image', this.srcResult);
-    formData.append('imageType', "Image");
+    formData.set('image',this.file);
+    formData.append('imageType',"image");
 
     let httpHeaders: HttpHeaders= new HttpHeaders().
-    append("Authorization", this.authService.getToken().toString())
-    .append("Content-Type", "application/json; charset=utf-8");
-
-    this.httpClient.post<any[]>("http://localhost:8000/api/upload_photo.php",{
-      "image": this.srcResult,
-      "imageType": "image"
-    },{
+    append("Authorization", this.authService.getToken().toString());
+    this.httpClient.post<any[]>("http://localhost:8000/api/upload_photo.php",formData,{
       headers:httpHeaders
     }).subscribe(
       uploadResponse =>{
