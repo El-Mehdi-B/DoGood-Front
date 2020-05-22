@@ -1,9 +1,8 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpResponseBase } from "@angular/common/http";
 import { Router } from "@angular/router";
-import { stringify } from "querystring";
-import { error } from "protractor";
 import { Observable } from "rxjs";
+
 const jwtIdentifier: string = "Authorization";
 
 @Injectable({
@@ -33,7 +32,7 @@ export class AuthService {
     }));
   }
   storeToken(jwt: string) {
-    localStorage.setItem(jwtIdentifier, jwt);
+    localStorage.setItem(jwtIdentifier,"Bearer "+jwt);
     this.toolbar.animate(); 
     this.router.navigate(['/']);
   }
@@ -53,4 +52,5 @@ export class AuthService {
   setToolbar(toolbar){
     this.toolbar=toolbar;
   }
+
 }
