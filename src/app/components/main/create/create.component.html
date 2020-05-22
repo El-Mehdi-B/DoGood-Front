@@ -1,0 +1,40 @@
+<div class="parent" style="overflow:auto;">
+    <div class="div1">
+        <mat-card  class="wrapper">
+            <mat-card-header>
+                <mat-card-title>Ajouter une tache sur la carte</mat-card-title>
+              </mat-card-header>
+
+            <mat-form-field class="filter">
+                    <input type="text"  placeholder="Adresse" matInput class="filter" [matAutocomplete]="auto" [ngModel] ="address" (ngModelChange) ="address=$event;getGpsCoordinateFromAdress($event)" />
+            </mat-form-field>
+            <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let singleAddress of addressList"  [value] = "singleAddress['display_name']">
+                    {{singleAddress['display_name']}}
+                </mat-option>
+            </mat-autocomplete>
+            <form class="form" >
+                <mat-card-content>
+                    <mat-form-field class="filter">
+                    <input type="text"  placeholder="Titre" matInput class="filter" />
+                </mat-form-field>
+                <mat-form-field class="filter">
+                    <input type="text"  placeholder="Description" matInput class="filter"   />
+                </mat-form-field>
+
+                <button type="button" mat-raised-button (click)="fileInput.click()">Choisir une image</button>
+                <input hidden (change)="onFileSelected()"  #fileInput  type="file"  accept=".png,.jpg,.jpeg" id="file">
+                    
+                </mat-card-content>
+                <button [disabled]="false" (click)="sendMarker()" mat-stroked-button color="accent" class="filter" class="btn-block">Ajouter la tache</button>
+                <mat-error *ngIf="false"></mat-error>
+            </form>
+        </mat-card>
+
+        <mat-progress-bar  *ngIf="false" mode="query"></mat-progress-bar>
+    </div>
+
+    <div class="div2">
+            <div id="map2" ></div>
+     </div>
+</div>

@@ -7,7 +7,7 @@ import { AuthService } from '../services/auth.service';
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-  loggedRoute: string[]= ['main',''];
+  loggedRoute: string[]= ['main','create',''];
   notLoggedRoute: string[]= ['login','register'];
 
   authService: AuthService;
