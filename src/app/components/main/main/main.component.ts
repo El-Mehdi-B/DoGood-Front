@@ -1,8 +1,9 @@
-import { Component, OnInit, AfterViewInit } from "@angular/core";
+import { Component, AfterViewInit } from "@angular/core";
+import { TodoMarker } from "../../../model/todomarker";
 import * as L from "../../../../../node_modules/leaflet";
-import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { GeocodingService } from "src/app/services/services/geocoding.service";
-import { LatLng } from 'leaflet';
+import { Observable } from 'rxjs/internal/Observable';
 
 @Component({
   selector: "app-main",
@@ -21,6 +22,9 @@ export class MainComponent implements AfterViewInit {
   addressRequestTimeout;
   markersIsideBoundsTimeout;
   addressList: any[];
+  markerList: Observable<TodoMarker[]>;
+  mapMarkerList: any[]= [];
+  firstCenterResearch: boolean = true;
 
   constructor(httpClient: HttpClient, geocodingService: GeocodingService) {
     this.geocodingService = geocodingService;
@@ -49,6 +53,21 @@ export class MainComponent implements AfterViewInit {
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }
   );
+
+
+  markerIcon = new L.Icon({
+    iconUrl:
+      "https://image.flaticon.com/icons/svg/2919/2919717.svg",
+    iconRetinaUrl:
+      "https://image.flaticon.com/icons/svg/2919/2919717.svg",
+    iconSize: [28, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+    shadowSize: [41, 41],
+  });
+
 
   ngAfterViewInit(): void {
     console.log("after view init");
@@ -86,18 +105,20 @@ export class MainComponent implements AfterViewInit {
     };
   }
   getMarkers(e) {
-    if (this.radius == 0 || this.radius==null) {
-    let boundingbox = [
-      this.getLatLongFromCardinalPoint(this.map.getBounds().getNorthWest()),
-      this.getLatLongFromCardinalPoint(this.map.getBounds().getNorthEast()),
-      this.getLatLongFromCardinalPoint(this.map.getBounds().getSouthEast()),
-      this.getLatLongFromCardinalPoint(this.map.getBounds().getSouthWest()),
-    ];
-    
+    if (this.radius == 0 || this.radius == null) {
+      let boundingbox = [
+        this.getLatLongFromCardinalPoint(this.map.getBounds().getNorthWest()),
+        this.getLatLongFromCardinalPoint(this.map.getBounds().getNorthEast()),
+        this.getLatLongFromCardinalPoint(this.map.getBounds().getSouthEast()),
+        this.getLatLongFromCardinalPoint(this.map.getBounds().getSouthWest()),
+      ];
+
       clearTimeout(this.markersIsideBoundsTimeout);
       this.markersIsideBoundsTimeout = setTimeout(() => {
         this.geocodingService.getMarkersFromBounds(boundingbox).subscribe(
           (response) => {
+            this.markerList=response;
+            this.markersToMapMarkers(response);
             console.log(JSON.stringify(response));
           },
           (error) => {
@@ -105,21 +126,35 @@ export class MainComponent implements AfterViewInit {
           }
         );
       }, 1000);
-    }else if(this.radius>0 && this.center != null){
-      this.geocodingService.getMarkersFromCenter(
-      {lat :this.center.getLatLng().lat, lon: this.center.getLatLng().lng}
-      ,this.radius).subscribe(
-        response=>{
-          console.log(JSON.stringify(response));
-
-        },
-        errror=>{
-
-        },
-      )
+    } else if (
+      this.radius > 0 &&
+      this.center != null &&
+      this.firstCenterResearch
+    ) {
+      this.geocodingService
+        .getMarkersFromCenter(
+          {
+            lat: this.center.getLatLng().lat,
+            lon: this.center.getLatLng().lng,
+          },
+          this.radius
+        )
+        .subscribe(
+          (response) => {
+            console.log(JSON.stringify(response));
+            this.markerList=response;
+            this.markersToMapMarkers(response);
+            this.firstCenterResearch = false;
+          },
+          (errror) => {
+            this.firstCenterResearch = false;
+          }
+        );
+      this.firstCenterResearch = false;
     }
   }
   updateCenter(coordinates) {
+    this.firstCenterResearch = true;
     if (this.center != null) {
       this.map.removeLayer(this.center);
     }
@@ -133,11 +168,13 @@ export class MainComponent implements AfterViewInit {
     this.map.doubleClickZoom.disable();
     this.addressList = null;
     this.address = "";
+    this.setResearchLabel(this.center);
   }
   focusOnCenter() {
     this.map.panTo(this.center.getLatLng());
   }
   updateCenterPerimeter(radius: number) {
+    this.firstCenterResearch = true;
     this.radius = radius;
     if (this.centerPerimeter != null) {
       this.map.removeLayer(this.centerPerimeter);
@@ -154,8 +191,9 @@ export class MainComponent implements AfterViewInit {
         }
       );
       this.centerPerimeter.addTo(this.map);
+      this.getMarkers(null);
+      console.log("updated radius, should re-render");
     }
-    this.getMarkers(null);
   }
   getGpsCoordinateFromAdress(targetAddress: string) {
     let isFound = false;
@@ -188,6 +226,52 @@ export class MainComponent implements AfterViewInit {
           }
         );
       }, 1000);
+    }
+  }
+  setResearchLabel(center) {
+    let params: string =
+      "format=json" +
+      "&" +
+      "lat=" +
+      center.getLatLng().lat +
+      "&" +
+      "lon=" +
+      center.getLatLng().lng;
+
+    this.httpClient
+      .get<any[]>("https://nominatim.openstreetmap.org/reverse?" + params)
+      .subscribe((response) => {
+        console.log(JSON.stringify(response));
+        this.address = response["display_name"];
+      });
+  }
+
+  routeTo(marker){
+
+  }
+
+  markersToMapMarkers(markerList){
+    if(this.mapMarkerList.length>0)this.deleteMapMarkers();
+    for(let marker of markerList){
+      this.mapMarkerList.push(
+        L.marker([marker.latitude, marker.longitude], { icon: this.markerIcon})
+        );
+    }
+    this.drawMapMarkers();
+  }
+
+
+  deleteMapMarkers(){
+    console.log('deleted one !');
+    for(let mapMarker of this.mapMarkerList){
+      console.log('deleted one !');
+      this.map.removeLayer(mapMarker);
+    }
+    this.mapMarkerList=[];
+  }
+  drawMapMarkers(){
+    for(let mapMarker of this.mapMarkerList){
+      mapMarker.addTo(this.map);
     }
   }
 }

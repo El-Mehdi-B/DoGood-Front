@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { AuthService } from "./auth.service";
-import { LatLng } from "leaflet";
+import {TodoMarker} from '../../model/todomarker';
 
 @Injectable({
   providedIn: "root",
@@ -27,7 +27,7 @@ export class GeocodingService {
       headers: headers,
     });
   }
-  getMarkersFromCenter({lat,lon}, distance): Observable<any[]> {
+  getMarkersFromCenter({lat,lon}, distance): Observable<TodoMarker[]> {
     let baseUrl: string = "http://localhost:8000/api/getMarkersFromCenter.php";
     let headers: HttpHeaders = new HttpHeaders()
       .append("Authorization", this.authService.getToken().toString())

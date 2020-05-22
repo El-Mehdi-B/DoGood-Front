@@ -1,4 +1,4 @@
-<div class="parent">
+<div class="parent" style="overflow:auto;">
     <div class="div1">
         <mat-card  class="wrapper">
             <mat-card-title>Rechercher une tache</mat-card-title>
@@ -15,6 +15,13 @@
                 <mat-form-field class="filter">
                     <input type="number" min="0" matInput placeholder="Rayon" [(ngModel)]="radius" (input)="updateCenterPerimeter(radius)">
                 </mat-form-field>
+
+                <mat-list>
+                    <div *ngFor="let marker of markerList">                    
+                        <mat-list-item ><a mat-button (click)="routeTo(marker)">{{marker.title}}</a></mat-list-item>
+                        <mat-divider></mat-divider>
+                    </div>
+                </mat-list>
         </mat-card>
     </div>
 
