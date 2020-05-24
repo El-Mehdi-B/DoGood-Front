@@ -1,33 +1,29 @@
 <mat-toolbar color="primary" [@openClose]="toAnimate">
+  <mat-toolbar-row *ngIf="!logged">
+    <h1>DoGood!</h1>
+    <span class="menu-spacer"></span>
+    <div>
+      <a mat-button [routerLink]="'/login'">Se Connecter</a>
+      <a mat-raised-button [routerLink]="'/register'">S'inscrire</a>
+    </div>
+  </mat-toolbar-row>
 
-    <mat-toolbar-row *ngIf="!logged" >
-      <h1>DoGood!</h1>
-      <span class="menu-spacer"></span>
-      <div>
-        <a mat-button  [routerLink]="'/login'">Se Connecter</a>
-        <a mat-raised-button  [routerLink]="'/register'">S'inscrire</a>
-      </div>
-    </mat-toolbar-row>
-    
-    <mat-toolbar-row *ngIf="logged" >
-        <h1>DoGood!</h1>
-        <div>
-        <a mat-icon-button [routerLink]="'/main'"><mat-icon aria-hidden="false" aria-label="rechercher">search</mat-icon>
-        </a>
-        <a mat-icon-button [routerLink]="'/create'">
-          <mat-icon aria-hidden="false" aria-label="Create">add_comment</mat-icon>
-          </a>
-          
-          <a mat-icon-button [routerLink]="'/tasks'">
-            <mat-icon aria-hidden="false" aria-label="taches">list</mat-icon>
-
-        </a>
-         
-        </div>
-        <span class="menu-spacer"></span>
-        <div>
-            <a mat-icon-button [routerLink]="'/about'"><mat-icon aria-hidden="false" aria-label="A propos">help</mat-icon></a>
-            <button mat-raised-button (click)="logout()">Se deconnecter</button>
-        </div>
-      </mat-toolbar-row>
-  </mat-toolbar>
+  <mat-toolbar-row *ngIf="logged">
+    <h1>DoGood!</h1>
+    <div>
+      <a mat-icon-button [routerLink]="'/main'"
+        ><mat-icon aria-hidden="false" aria-label="rechercher">search</mat-icon>
+      </a>
+      <a mat-icon-button [routerLink]="'/create'">
+        <mat-icon aria-hidden="false" aria-label="Create">add_comment</mat-icon>
+      </a>
+    </div>
+    <span class="menu-spacer"></span>
+    <div>
+      <a mat-icon-button [routerLink]="'/about'"
+        ><mat-icon aria-hidden="false" aria-label="A propos">help</mat-icon></a
+      >
+      <button mat-raised-button (click)="logout()">Se deconnecter</button>
+    </div>
+  </mat-toolbar-row>
+</mat-toolbar>

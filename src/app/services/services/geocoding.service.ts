@@ -19,7 +19,7 @@ export class GeocodingService {
   getMarkersFromBounds(boundingBox: any): Observable<any[]> {
     let body: string = '{ "data" : ' + JSON.stringify(boundingBox) + "}";
     console.log(body);
-    let baseUrl: string = "http://localhost:8000/api/getMarkersFromBounds.php";
+    let baseUrl: string = "http://dogood.ddns.net/getMarkersFromBounds.php";
     let headers: HttpHeaders = new HttpHeaders()
       .append("Authorization", this.authService.getToken().toString())
       .append("Content-Type", "application/json; charset=utf-8");
@@ -28,7 +28,7 @@ export class GeocodingService {
     });
   }
   getMarkersFromCenter({lat,lon}, distance): Observable<TodoMarker[]> {
-    let baseUrl: string = "http://localhost:8000/api/getMarkersFromCenter.php";
+    let baseUrl: string = "http://dogood.ddns.net/getMarkersFromCenter.php";
     let headers: HttpHeaders = new HttpHeaders()
       .append("Authorization", this.authService.getToken().toString())
       .append("Content-Type", "application/json; charset=utf-8");

@@ -13,6 +13,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import {FormsModule} from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { AboutComponent } from '../components/about/about.component';
+import { DescribeComponent } from '../components/describe/describe.component';
 
 
 
@@ -25,7 +27,9 @@ import { HttpClientModule } from '@angular/common/http';
         ToolbarComponent,        
         NotFoundComponent,
         RegisterComponent,
-        RegisteredComponent
+        RegisteredComponent,
+        AboutComponent,
+        DescribeComponent
     ],
     imports: [CommonModule,AngularMaterialModule,AppRoutingModule,ReactiveFormsModule,FormsModule,HttpClientModule],
     exports: [
@@ -34,7 +38,11 @@ import { HttpClientModule } from '@angular/common/http';
         MainComponent,CreateComponent,
         ToolbarComponent,        
         NotFoundComponent,
-        RegisterComponent,RegisteredComponent]
+        RegisterComponent,
+        RegisteredComponent,
+        AboutComponent,
+        DescribeComponent]
+        
   })
   export class ComponentsModule { }
   

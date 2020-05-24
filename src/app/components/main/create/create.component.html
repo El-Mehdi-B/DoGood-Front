@@ -1,40 +1,82 @@
-<div class="parent" style="overflow:auto;">
-    <div class="div1">
-        <mat-card  class="wrapper">
-            <mat-card-header>
-                <mat-card-title>Ajouter une tache sur la carte</mat-card-title>
-              </mat-card-header>
+<div class="parent" style="overflow: auto;">
+  <div class="div1">
+    <mat-card class="wrapper">
+      <mat-card-header>
+        <mat-card-title>Ajouter une tache sur la carte</mat-card-title>
+      </mat-card-header>
 
-            <mat-form-field class="filter">
-                    <input type="text"  placeholder="Adresse" matInput class="filter" [matAutocomplete]="auto" [ngModel] ="address" (ngModelChange) ="address=$event;getGpsCoordinateFromAdress($event)" />
-            </mat-form-field>
-            <mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let singleAddress of addressList"  [value] = "singleAddress['display_name']">
-                    {{singleAddress['display_name']}}
-                </mat-option>
-            </mat-autocomplete>
-            <form class="form" >
-                <mat-card-content>
-                    <mat-form-field class="filter">
-                    <input type="text"  placeholder="Titre" matInput class="filter" />
-                </mat-form-field>
-                <mat-form-field class="filter">
-                    <input type="text"  placeholder="Description" matInput class="filter"   />
-                </mat-form-field>
+      <form class="form" [formGroup]="markerForm" (ngSubmit)="postImage()">
 
-                <button type="button" mat-raised-button (click)="fileInput.click()">Choisir une image</button>
-                <input hidden (change)="onFileSelected()"  #fileInput  type="file"  accept=".png,.jpg" id="file">
-                    
-                </mat-card-content>
-                <button [disabled]="false" (click)="postImage()" mat-stroked-button color="accent" class="filter" class="btn-block">Ajouter la tache</button>
-                <mat-error *ngIf="false"></mat-error>
-            </form>
-        </mat-card>
 
-        <mat-progress-bar  *ngIf="false" mode="query"></mat-progress-bar>
-    </div>
+        <button type="button" mat-raised-button (click)="fileInput.click()">
+          Choisir une image
+        </button>
+        <input
+          hidden
+          (change)="onFileSelected()"
+          #fileInput
+          formControlName="file"
+          type="file"
+          accept=".png,.jpg"
+          id="file"
+        />
+        <mat-hint *ngIf="file!=null">{{file.name}}</mat-hint>
+        <mat-form-field class="filter">
+          <input
+            type="text"
+            placeholder="Adresse"
+            matInput
+            class="filter"
+            formControlName="address"
+            [matAutocomplete]="auto"
+            [ngModel]="address"
+            (ngModelChange)="
+              address = $event; getGpsCoordinateFromAdress($event)
+            "
+          />
+        </mat-form-field>
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option
+            *ngFor="let singleAddress of addressList"
+            [value]="singleAddress['display_name']"
+          >
+            {{ singleAddress["display_name"] }}
+          </mat-option>
+        </mat-autocomplete>
 
-    <div class="div2">
-            <div id="map2" ></div>
-     </div>
+        <mat-card-content>
+          <mat-form-field class="filter">
+            <input type="text" requiered placeholder="Titre"             formControlName="title"
+            matInput class="filter" />
+          </mat-form-field>
+          <mat-form-field class="filter">
+            <input required
+              type="textarea"
+              placeholder="Description"
+              formControlName="description"
+              matInput
+              class="filter"
+            />
+          </mat-form-field>
+        </mat-card-content>
+        <button
+          [disabled]="!readyToSend"
+          (click)="postImage()"
+          mat-stroked-button
+          color="accent"
+          class="filter"
+          class="btn-block"
+        >
+          Ajouter la tache
+        </button>
+        <mat-error *ngIf="error!=''">{{error}}</mat-error>
+      </form>
+    </mat-card>
+
+    <mat-progress-bar *ngIf="sending" mode="query"></mat-progress-bar>
+  </div>
+
+  <div class="div2">
+    <div id="map2"></div>
+  </div>
 </div>

@@ -1,0 +1,14 @@
+<div class="login-wrapper" fxLayout="row" fxLayoutAlign="center center">
+    <mat-card class="box">
+      <mat-card-header>
+        <mat-card-title>{{marker.title}}</mat-card-title>
+        <mat-card-subtitle>{{marker.creation_date}}</mat-card-subtitle>
+
+      </mat-card-header>
+      <p>{{marker.description}}</p>
+      <br>
+        <mat-card-content>
+            <img mat-card-image src="{{getUri()}}">
+        </mat-card-content>
+    </mat-card>
+</div>

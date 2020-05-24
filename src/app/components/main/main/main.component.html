@@ -18,7 +18,7 @@
 
                 <mat-list>
                     <div *ngFor="let marker of markerList">                    
-                        <mat-list-item ><a mat-button (click)="routeTo(marker)">{{marker.title}}</a></mat-list-item>
+                        <mat-list-item ><a mat-button (click)="routeTo(marker['todomarker_id'])">{{marker.title}}</a></mat-list-item>
                         <mat-divider></mat-divider>
                     </div>
                 </mat-list>

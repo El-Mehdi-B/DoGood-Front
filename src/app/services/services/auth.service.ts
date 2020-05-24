@@ -26,7 +26,7 @@ export class AuthService {
 
   }
   connect(username: string, password: string): Observable<any[]> {
-    return this.httpClient.post<any[]>("http://localhost:8000/api/login.php",JSON.stringify({
+    return this.httpClient.post<any[]>("http://dogood.ddns.net/login.php",JSON.stringify({
       username: username,
       password: password,
     }));
@@ -45,8 +45,8 @@ export class AuthService {
     password: string
   ): Observable<any[]> {
     return this.httpClient.post<any[]>(
-      "http://localhost:8000/api/register.php",
-      JSON.stringify({ username: username, email: email, password: password })
+      "http://dogood.ddns.net/register.php",
+      JSON.stringify({ "username": username, "email": email, "password": password }),
     );
   }
   setToolbar(toolbar){

@@ -1,15 +1,17 @@
-import { Component, AfterViewInit, ViewChild } from "@angular/core";
+import { Component, AfterViewInit, ViewChild, OnInit } from "@angular/core";
 import * as L from "../../../../../node_modules/leaflet";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { GeocodingService } from "src/app/services/services/geocoding.service";
 import { AuthService } from 'src/app/services/services/auth.service';
+import { FormGroup, Validators, FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: "app-create",
   templateUrl: "./create.component.html",
   styleUrls: ["./create.component.scss"],
 })
-export class CreateComponent implements AfterViewInit {
+export class CreateComponent implements AfterViewInit, OnInit {
   map;
   center;
   centerPerimeter;
@@ -23,8 +25,13 @@ export class CreateComponent implements AfterViewInit {
   addressList: any[];
   firstCenterResearch: boolean = true;
   authService: AuthService;
-
+  markerForm; FormGroup;
   srcResult;
+  readyToSend:boolean =false;
+  sending:boolean=false;
+  error:string;
+
+  router:Router;
 
   @ViewChild('fileInput')
   fileInput;
@@ -32,10 +39,27 @@ export class CreateComponent implements AfterViewInit {
   file: File | null = null;
 
 
-  constructor(httpClient: HttpClient, geocodingService: GeocodingService, authService: AuthService) {
+  constructor(httpClient: HttpClient, geocodingService: GeocodingService, authService: AuthService,router: Router) {
     this.geocodingService = geocodingService;
     this.httpClient = httpClient;
     this.authService = authService;
+    this.router=router;
+  }
+  ngOnInit(): void {
+    this.markerForm= new FormGroup({
+      title: new FormControl('',[Validators.required, Validators.minLength(8)]) ,
+      description: new FormControl('',[Validators.required, Validators.minLength(32)]),
+      address: new FormControl('',[Validators.required, Validators.minLength(32)]),
+      file : new FormControl('',[Validators.required])
+    })
+    this.markerForm.valueChanges.subscribe((val)=>{
+      console.log('modified')
+      this.readyToSend= this.markerForm.controls['title'].valid &&
+      this.markerForm.controls['description'].valid &&
+      this.markerForm.controls['address'].valid &&
+      this.file!=null; 
+
+    })
   }
 
   centerIcon = new L.Icon({
@@ -186,19 +210,49 @@ export class CreateComponent implements AfterViewInit {
     console.log(this.file);
   }
   postImage(){
-
+    this.readyToSend=false;
+    this.sending=true;
     let formData: FormData = new FormData();
     formData.set('image',this.file);
     formData.append('imageType',"image");
 
     let httpHeaders: HttpHeaders= new HttpHeaders().
-    append("Authorization", this.authService.getToken().toString());
-    this.httpClient.post<any[]>("http://localhost:8000/api/upload_photo.php",formData,{
+    append("Authorization", this.authService.getToken().toString()).append('Access-Control-Allow-Origin','*').
+    append('Access-Control-Allow-Headers', 'Access-Control-Allow-Origin, Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    this.httpClient.post<any[]>("http://dogood.ddns.net/upload_photo.php",formData,{
       headers:httpHeaders
     }).subscribe(
       uploadResponse =>{
-        console.log("eheh buoy");
+        let image_uri= uploadResponse["name"];
+        let body= {
+          title : this.markerForm.controls['title'].value,
+          description : this.markerForm.controls['description'].value,
+          address : this.markerForm.controls['address'].value,
+          image_uri: image_uri,
+          location:{
+            lat: this.center.getLatLng().lat ,
+            lon: this.center.getLatLng().lng
+          }
+        };
+        console.log(JSON.stringify(body));
+        this.httpClient.post<any[]>("http://dogood.ddns.net/createMarker.php",body,{
+          headers:httpHeaders
+        }).subscribe(
+          uploadResponse =>{
+            this.router.navigate(['/main']);
+            this.sending=false;
+            this.readyToSend=true;
+          },
+          error=>{
+            this.error="erreur d'upload";
+            this.sending=false;
+            this.readyToSend=true;
+          });
       }
-    )
+    ),
+    error=>{
+      this.sending=false;
+      this.readyToSend=true;
+    }
   }
 }

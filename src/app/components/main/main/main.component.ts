@@ -4,6 +4,7 @@ import * as L from "../../../../../node_modules/leaflet";
 import { HttpClient } from "@angular/common/http";
 import { GeocodingService } from "src/app/services/services/geocoding.service";
 import { Observable } from 'rxjs/internal/Observable';
+import { Router } from '@angular/router';
 
 @Component({
   selector: "app-main",
@@ -25,10 +26,12 @@ export class MainComponent implements AfterViewInit {
   markerList: Observable<TodoMarker[]>;
   mapMarkerList: any[]= [];
   firstCenterResearch: boolean = true;
+  router:Router;
 
-  constructor(httpClient: HttpClient, geocodingService: GeocodingService) {
+  constructor(httpClient: HttpClient, geocodingService: GeocodingService, router: Router) {
     this.geocodingService = geocodingService;
     this.httpClient = httpClient;
+    this.router=router;
   }
 
   centerIcon = new L.Icon({
@@ -105,6 +108,7 @@ export class MainComponent implements AfterViewInit {
     };
   }
   getMarkers(e) {
+    console.log("GET MARKERS;")
     if (this.radius == 0 || this.radius == null) {
       let boundingbox = [
         this.getLatLongFromCardinalPoint(this.map.getBounds().getNorthWest()),
@@ -124,13 +128,14 @@ export class MainComponent implements AfterViewInit {
           (error) => {
             console.log("Erreur ! : " + error);
           }
-        );
+        );  
       }, 1000);
     } else if (
       this.radius > 0 &&
       this.center != null &&
       this.firstCenterResearch
     ) {
+      console.log("GET MARKERS FROM CENTER;");
       this.geocodingService
         .getMarkersFromCenter(
           {
@@ -142,12 +147,14 @@ export class MainComponent implements AfterViewInit {
         .subscribe(
           (response) => {
             console.log(JSON.stringify(response));
+            console.log("GOT IT !;");
             this.markerList=response;
             this.markersToMapMarkers(response);
             this.firstCenterResearch = false;
           },
-          (errror) => {
+          (error) => {
             this.firstCenterResearch = false;
+            console.log("Erreur ! : " + error);
           }
         );
       this.firstCenterResearch = false;
@@ -246,8 +253,9 @@ export class MainComponent implements AfterViewInit {
       });
   }
 
-  routeTo(marker){
-
+  routeTo(marker: string){
+    console.log("route !");
+    this.router.navigateByUrl('describe/'+marker); 
   }
 
   markersToMapMarkers(markerList){
@@ -259,12 +267,8 @@ export class MainComponent implements AfterViewInit {
     }
     this.drawMapMarkers();
   }
-
-
   deleteMapMarkers(){
-    console.log('deleted one !');
     for(let mapMarker of this.mapMarkerList){
-      console.log('deleted one !');
       this.map.removeLayer(mapMarker);
     }
     this.mapMarkerList=[];
